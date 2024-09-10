@@ -108,8 +108,8 @@ public class Department implements Serializable {
     for (Map.Entry<String, Course> entry : courses.entrySet()) {
       String key = entry.getKey();
       Course value = entry.getValue();
-      result.append(deptCode).append(" ").append(key).append(": ").append(value.toString())
-        .append("\n");
+      result.append(deptCode).append(' ').append(key).append(": ").append(value.toString())
+        .append('\n');
     }
     return result.toString();
   }

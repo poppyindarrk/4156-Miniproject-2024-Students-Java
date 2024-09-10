@@ -108,8 +108,8 @@ public class Department implements Serializable {
 <span class="fc bfc" id="L108" title="All 2 branches covered.">    for (Map.Entry&lt;String, Course&gt; entry : courses.entrySet()) {</span>
 <span class="fc" id="L109">      String key = entry.getKey();</span>
 <span class="fc" id="L110">      Course value = entry.getValue();</span>
-<span class="fc" id="L111">      result.append(deptCode).append(&quot; &quot;).append(key).append(&quot;: &quot;).append(value.toString())</span>
-<span class="fc" id="L112">        .append(&quot;\n&quot;);</span>
+<span class="fc" id="L111">      result.append(deptCode).append(' ').append(key).append(&quot;: &quot;).append(value.toString())</span>
+<span class="fc" id="L112">        .append('\n');</span>
 <span class="fc" id="L113">    }</span>
 <span class="fc" id="L114">    return result.toString();</span>
   }
