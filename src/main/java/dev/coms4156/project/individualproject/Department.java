@@ -69,7 +69,7 @@ public class Department implements Serializable {
     if (numberOfMajors > 0) {
       numberOfMajors--;
     } else {
-      System.out.println("Cannot drop majors, no majors left.");
+      throw new IllegalStateException("Cannot drop majors, no majors left.");
     }
   }
 
@@ -109,7 +109,7 @@ public class Department implements Serializable {
       String key = entry.getKey();
       Course value = entry.getValue();
       result.append(deptCode).append(" ").append(key).append(": ").append(value.toString())
-          .append("\n");
+        .append("\n");
     }
     return result.toString();
   }
