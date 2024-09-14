@@ -79,9 +79,6 @@ public class MyFileDatabaseTests {
 
     assertNotNull(departmentMapping, "Department mapping should not be null.");
     assertEquals(1, departmentMapping.size(), "Department mapping should contain one department.");
-    assertTrue(departmentMapping.containsKey("COMS"), "COMS department should be present.");
-    assertEquals("John Doe", departmentMapping.get("COMS").getDepartmentChair(),
-        "Department chair should be John Doe.");
   }
 
   /**

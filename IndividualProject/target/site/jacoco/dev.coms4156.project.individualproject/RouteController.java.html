@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RouteController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">IndividualProject</a> &gt; <a href="index.source.html" class="el_package">dev.coms4156.project.individualproject</a> &gt; <span class="el_source">RouteController.java</span></div><h1>RouteController.java</h1><pre class="source lang-java linenums">package dev.coms4156.project.individualproject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Logger;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 /**
  * This class contains all the API routes for the system.
  */
 
 @RestController
-<span class="fc" id="L17">public class RouteController {</span>
-<span class="fc" id="L18">  Logger log = Logger.getLogger(RouteController.class.getName());</span>
+<span class="fc" id="L20">public class RouteController {</span>
+<span class="fc" id="L21">  Logger log = Logger.getLogger(RouteController.class.getName());</span>
   /**
    * Redirects to the homepage.
    *
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
   @GetMapping({&quot;/&quot;, &quot;/index&quot;, &quot;/home&quot;})
   public String index() {
-<span class="nc" id="L27">    return &quot;Welcome, in order to make an API call direct your browser or Postman to an endpoint &quot;</span>
+<span class="nc" id="L30">    return &quot;Welcome, in order to make an API call direct your browser or Postman to an endpoint &quot;</span>
         + &quot;\n\n This can be done using the following format: \n\n http:127.0.0&quot;
         + &quot;.1:8080/endpoint?arg=value&quot;;
   }
@@ -42,19 +45,23 @@ import org.springframework.web.bind.annotation.RestController;
   public ResponseEntity&lt;?&gt; retrieveDepartment(@RequestParam(value = &quot;deptCode&quot;) String deptCode) {
     try {
       HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L45">      departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L48">      departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
 
-<span class="fc bfc" id="L47" title="All 2 branches covered.">      if (!departmentMapping.containsKey(deptCode.toUpperCase())) {</span>
-<span class="fc" id="L48">        return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+      // Use Locale.ROOT for locale-independent case transformation
+<span class="fc" id="L51">      String deptCodeUpper = deptCode.toUpperCase(Locale.ROOT);</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">      if (!departmentMapping.containsKey(deptCodeUpper)) {</span>
+<span class="fc" id="L54">        return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       } else {
-<span class="fc" id="L50">        return new ResponseEntity&lt;&gt;(departmentMapping.get(deptCode.toUpperCase()).toString(),</span>
-            HttpStatus.OK);
+<span class="fc" id="L56">        return new ResponseEntity&lt;&gt;(departmentMapping.get(deptCodeUpper).toString(),</span>
+          HttpStatus.OK);
       }
 
-<span class="nc" id="L54">    } catch (Exception e) {</span>
-<span class="nc" id="L55">      return handleException(e);</span>
+<span class="nc" id="L60">    } catch (Exception e) {</span>
+<span class="nc" id="L61">      return handleException(e);</span>
     }
   }
+
 
   /**
    * Displays the details of the requested course to the user or displays the proper error
@@ -74,24 +81,24 @@ import org.springframework.web.bind.annotation.RestController;
   public ResponseEntity&lt;?&gt; retrieveCourse(@RequestParam(value = &quot;deptCode&quot;) String deptCode,
                                           @RequestParam(value = &quot;courseCode&quot;) int courseCode) {
     try {
-<span class="fc bfc" id="L77" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L80">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L87">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L82">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L89">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (!coursesMapping.containsKey(Integer.toString(courseCode))) {</span>
-<span class="fc" id="L85">          return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (!coursesMapping.containsKey(Integer.toString(courseCode))) {</span>
+<span class="fc" id="L92">          return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
         } else {
-<span class="fc" id="L87">          return new ResponseEntity&lt;&gt;(coursesMapping.get(Integer.toString(courseCode)).toString(),</span>
+<span class="fc" id="L94">          return new ResponseEntity&lt;&gt;(coursesMapping.get(Integer.toString(courseCode)).toString(),</span>
               HttpStatus.OK);
         }
 
       }
-<span class="fc" id="L92">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
-<span class="nc" id="L93">    } catch (Exception e) {</span>
-<span class="nc" id="L94">      return handleException(e);</span>
+<span class="fc" id="L99">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L100">    } catch (Exception e) {</span>
+<span class="nc" id="L101">      return handleException(e);</span>
     }
   }
 
@@ -113,30 +120,30 @@ import org.springframework.web.bind.annotation.RestController;
                                         @RequestParam(value = &quot;courseCode&quot;) int courseCode) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L116" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L118" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L120">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L127">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L122">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L129">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L124">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L131">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
 
         // Check if the course is full
-<span class="fc" id="L127">        boolean isFull = requestedCourse.isCourseFull();</span>
+<span class="fc" id="L134">        boolean isFull = requestedCourse.isCourseFull();</span>
 
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (isFull) {</span>
-<span class="fc" id="L130">          return new ResponseEntity&lt;&gt;(&quot;Course is full&quot;, HttpStatus.CONFLICT);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (isFull) {</span>
+<span class="fc" id="L137">          return new ResponseEntity&lt;&gt;(&quot;Course is full&quot;, HttpStatus.CONFLICT);</span>
         } else {
-<span class="fc" id="L132">          return new ResponseEntity&lt;&gt;(&quot;Course is not full&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L139">          return new ResponseEntity&lt;&gt;(&quot;Course is not full&quot;, HttpStatus.OK);</span>
         }
       } else {
-<span class="fc" id="L135">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L142">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
 
-<span class="nc" id="L138">    } catch (Exception e) {</span>
-<span class="nc" id="L139">      return handleException(e);</span>
+<span class="nc" id="L145">    } catch (Exception e) {</span>
+<span class="nc" id="L146">      return handleException(e);</span>
     }
   }
 
@@ -154,16 +161,16 @@ import org.springframework.web.bind.annotation.RestController;
   @GetMapping(value = &quot;/getMajorCountFromDept&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity&lt;?&gt; getMajorCtFromDept(@RequestParam(value = &quot;deptCode&quot;) String deptCode) {
     try {
-<span class="fc bfc" id="L157" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L160">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
-<span class="fc" id="L161">        return new ResponseEntity&lt;&gt;(&quot;There are: &quot; + departmentMapping.get(deptCode)</span>
-<span class="fc" id="L162">            .getNumberOfMajors() + &quot; majors in the department&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L167">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L168">        return new ResponseEntity&lt;&gt;(&quot;There are: &quot; + departmentMapping.get(deptCode)</span>
+<span class="fc" id="L169">            .getNumberOfMajors() + &quot; majors in the department&quot;, HttpStatus.OK);</span>
       }
-<span class="fc" id="L164">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
-<span class="nc" id="L165">    } catch (Exception e) {</span>
-<span class="nc" id="L166">      return handleException(e);</span>
+<span class="fc" id="L171">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L172">    } catch (Exception e) {</span>
+<span class="nc" id="L173">      return handleException(e);</span>
     }
   }
 
@@ -180,16 +187,16 @@ import org.springframework.web.bind.annotation.RestController;
   @GetMapping(value = &quot;/idDeptChair&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity&lt;?&gt; identifyDeptChair(@RequestParam(value = &quot;deptCode&quot;) String deptCode) {
     try {
-<span class="fc bfc" id="L183" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
-<span class="fc bfc" id="L184" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L186">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
-<span class="fc" id="L187">        return new ResponseEntity&lt;&gt;(departmentMapping.get(deptCode).getDepartmentChair() + &quot; is &quot;</span>
+<span class="fc" id="L193">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L194">        return new ResponseEntity&lt;&gt;(departmentMapping.get(deptCode).getDepartmentChair() + &quot; is &quot;</span>
             + &quot;the department chair.&quot;, HttpStatus.OK);
       }
-<span class="fc" id="L190">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
-<span class="nc" id="L191">    } catch (Exception e) {</span>
-<span class="nc" id="L192">      return handleException(e);</span>
+<span class="fc" id="L197">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L198">    } catch (Exception e) {</span>
+<span class="nc" id="L199">      return handleException(e);</span>
     }
   }
 
@@ -211,23 +218,23 @@ import org.springframework.web.bind.annotation.RestController;
                                               @RequestParam(value = &quot;courseCode&quot;) int courseCode) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L214" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L216" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L218">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L225">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L220">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L227">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L222">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L223">        return new ResponseEntity&lt;&gt;(requestedCourse.getCourseLocation() + &quot; is where the course &quot;</span>
+<span class="fc" id="L229">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L230">        return new ResponseEntity&lt;&gt;(requestedCourse.getCourseLocation() + &quot; is where the course &quot;</span>
             + &quot;is located.&quot;, HttpStatus.OK);
       } else {
-<span class="fc" id="L226">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L233">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
 
-<span class="nc" id="L229">    } catch (Exception e) {</span>
-<span class="nc" id="L230">      return handleException(e);</span>
+<span class="nc" id="L236">    } catch (Exception e) {</span>
+<span class="nc" id="L237">      return handleException(e);</span>
     }
   }
 
@@ -250,23 +257,23 @@ import org.springframework.web.bind.annotation.RestController;
                                                 int courseCode) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L253" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L255" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L257">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L264">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L259">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L266">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L261">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L262">        return new ResponseEntity&lt;&gt;(requestedCourse.getInstructorName() + &quot; is the instructor for&quot;</span>
+<span class="fc" id="L268">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L269">        return new ResponseEntity&lt;&gt;(requestedCourse.getInstructorName() + &quot; is the instructor for&quot;</span>
             + &quot; the course.&quot;, HttpStatus.OK);
       } else {
-<span class="fc" id="L265">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L272">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
 
-<span class="nc" id="L268">    } catch (Exception e) {</span>
-<span class="nc" id="L269">      return handleException(e);</span>
+<span class="nc" id="L275">    } catch (Exception e) {</span>
+<span class="nc" id="L276">      return handleException(e);</span>
     }
   }
 
@@ -288,22 +295,22 @@ import org.springframework.web.bind.annotation.RestController;
                                           @RequestParam(value = &quot;courseCode&quot;) int courseCode) {
     try {
       boolean doesCourseExists;
-<span class="nc bnc" id="L291" title="All 2 branches missed.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="nc bnc" id="L293" title="All 2 branches missed.">      if (doesCourseExists) {</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="nc" id="L295">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="nc" id="L302">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="nc" id="L297">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="nc" id="L304">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="nc" id="L299">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="nc" id="L300">        return new ResponseEntity&lt;&gt;(&quot;The course meets at: &quot; + &quot;some time &quot;,</span>
+<span class="nc" id="L306">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="nc" id="L307">        return new ResponseEntity&lt;&gt;(&quot;The course meets at: &quot; + &quot;some time &quot;,</span>
             HttpStatus.OK);
       } else {
-<span class="nc" id="L303">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L310">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
-<span class="nc" id="L305">    } catch (Exception e) {</span>
-<span class="nc" id="L306">      return handleException(e);</span>
+<span class="nc" id="L312">    } catch (Exception e) {</span>
+<span class="nc" id="L313">      return handleException(e);</span>
     }
   }
 
@@ -319,18 +326,18 @@ import org.springframework.web.bind.annotation.RestController;
   @PatchMapping(value = &quot;/addMajorToDept&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity&lt;?&gt; addMajorToDept(@RequestParam(value = &quot;deptCode&quot;) String deptCode) {
     try {
-<span class="pc bpc" id="L322" title="1 of 2 branches missed.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
-<span class="pc bpc" id="L323" title="1 of 2 branches missed.">      if (doesDepartmentExists) {</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">      if (doesDepartmentExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L325">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L332">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
 
-<span class="fc" id="L327">        Department specifiedDept = departmentMapping.get(deptCode);</span>
-<span class="fc" id="L328">        specifiedDept.addMajorToDepartment();</span>
-<span class="fc" id="L329">        return new ResponseEntity&lt;&gt;(&quot;Attribute was updated successfully&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L334">        Department specifiedDept = departmentMapping.get(deptCode);</span>
+<span class="fc" id="L335">        specifiedDept.addMajorToDepartment();</span>
+<span class="fc" id="L336">        return new ResponseEntity&lt;&gt;(&quot;Attribute was updated successfully&quot;, HttpStatus.OK);</span>
       }
-<span class="nc" id="L331">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
-<span class="nc" id="L332">    } catch (Exception e) {</span>
-<span class="nc" id="L333">      return handleException(e);</span>
+<span class="nc" id="L338">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L339">    } catch (Exception e) {</span>
+<span class="nc" id="L340">      return handleException(e);</span>
     }
   }
 
@@ -346,22 +353,22 @@ import org.springframework.web.bind.annotation.RestController;
   @PatchMapping(value = &quot;/removeMajorFromDept&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity&lt;?&gt; removeMajorFromDept(@RequestParam(value = &quot;deptCode&quot;) String deptCode) {
     try {
-<span class="fc bfc" id="L349" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
-<span class="fc bfc" id="L350" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">      boolean doesDepartmentExists = retrieveDepartment(deptCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">      if (doesDepartmentExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L352">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L359">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
 
-<span class="fc" id="L354">        Department specifiedDept = departmentMapping.get(deptCode);</span>
-<span class="fc bfc" id="L355" title="All 2 branches covered.">        if (specifiedDept.getNumberOfMajors() &lt;= 0) {</span>
-<span class="fc" id="L356">          return new ResponseEntity&lt;&gt;(&quot;Attribute was updated or is at minimum&quot;,</span>
+<span class="fc" id="L361">        Department specifiedDept = departmentMapping.get(deptCode);</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        if (specifiedDept.getNumberOfMajors() &lt;= 0) {</span>
+<span class="fc" id="L363">          return new ResponseEntity&lt;&gt;(&quot;Attribute was updated or is at minimum&quot;,</span>
             HttpStatus.BAD_REQUEST);
         }
-<span class="fc" id="L359">        specifiedDept.dropPersonFromMajor();</span>
-<span class="fc" id="L360">        return new ResponseEntity&lt;&gt;(&quot;Major count was updated successfully&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L366">        specifiedDept.dropPersonFromMajor();</span>
+<span class="fc" id="L367">        return new ResponseEntity&lt;&gt;(&quot;Major count was updated successfully&quot;, HttpStatus.OK);</span>
       }
-<span class="fc" id="L362">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
-<span class="nc" id="L363">    } catch (Exception e) {</span>
-<span class="nc" id="L364">      return handleException(e);</span>
+<span class="fc" id="L369">      return new ResponseEntity&lt;&gt;(&quot;Department Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L370">    } catch (Exception e) {</span>
+<span class="nc" id="L371">      return handleException(e);</span>
     }
   }
 
@@ -381,27 +388,27 @@ import org.springframework.web.bind.annotation.RestController;
                                        @RequestParam(value = &quot;courseCode&quot;) int courseCode) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L384" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L391" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L386" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L388">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L395">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L390">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L397">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L392">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L393">        boolean isStudentDropped = requestedCourse.dropStudent();</span>
+<span class="fc" id="L399">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L400">        boolean isStudentDropped = requestedCourse.dropStudent();</span>
 
-<span class="pc bpc" id="L395" title="1 of 2 branches missed.">        if (isStudentDropped) {</span>
-<span class="fc" id="L396">          return new ResponseEntity&lt;&gt;(&quot;Student has been dropped.&quot;, HttpStatus.OK);</span>
+<span class="pc bpc" id="L402" title="1 of 2 branches missed.">        if (isStudentDropped) {</span>
+<span class="fc" id="L403">          return new ResponseEntity&lt;&gt;(&quot;Student has been dropped.&quot;, HttpStatus.OK);</span>
         } else {
-<span class="nc" id="L398">          return new ResponseEntity&lt;&gt;(&quot;Student has not been dropped.&quot;, HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L405">          return new ResponseEntity&lt;&gt;(&quot;Student has not been dropped.&quot;, HttpStatus.BAD_REQUEST);</span>
         }
       } else {
-<span class="fc" id="L401">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L408">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
-<span class="nc" id="L403">    } catch (Exception e) {</span>
-<span class="nc" id="L404">      return handleException(e);</span>
+<span class="nc" id="L410">    } catch (Exception e) {</span>
+<span class="nc" id="L411">      return handleException(e);</span>
     }
   }
   /**
@@ -424,22 +431,22 @@ import org.springframework.web.bind.annotation.RestController;
                                               @RequestParam(value = &quot;count&quot;) int count) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L427" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L429" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L431">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L438">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L433">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L440">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L435">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L436">        requestedCourse.setEnrolledStudentCount(count);</span>
-<span class="fc" id="L437">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L442">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L443">        requestedCourse.setEnrolledStudentCount(count);</span>
+<span class="fc" id="L444">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
       } else {
-<span class="fc" id="L439">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L446">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
-<span class="nc" id="L441">    } catch (Exception e) {</span>
-<span class="nc" id="L442">      return handleException(e);</span>
+<span class="nc" id="L448">    } catch (Exception e) {</span>
+<span class="nc" id="L449">      return handleException(e);</span>
     }
   }
 
@@ -461,22 +468,22 @@ import org.springframework.web.bind.annotation.RestController;
                                             @RequestParam(value = &quot;time&quot;) String time) {
     try {
       boolean doesCourseExists;
-<span class="pc bpc" id="L464" title="1 of 2 branches missed.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="pc bpc" id="L471" title="1 of 2 branches missed.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="pc bpc" id="L466" title="1 of 2 branches missed.">      if (doesCourseExists) {</span>
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L468">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L475">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L470">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L477">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L472">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L473">        requestedCourse.reassignTime(time);</span>
-<span class="fc" id="L474">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L479">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L480">        requestedCourse.reassignTime(time);</span>
+<span class="fc" id="L481">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
       } else {
-<span class="nc" id="L476">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="nc" id="L483">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
-<span class="nc" id="L478">    } catch (Exception e) {</span>
-<span class="nc" id="L479">      return handleException(e);</span>
+<span class="nc" id="L485">    } catch (Exception e) {</span>
+<span class="nc" id="L486">      return handleException(e);</span>
     }
   }
 
@@ -499,22 +506,22 @@ import org.springframework.web.bind.annotation.RestController;
                                                @RequestParam(value = &quot;teacher&quot;) String teacher) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L502" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L504" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L511" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L506">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L513">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L508">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L515">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L510">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L511">        requestedCourse.reassignInstructor(teacher);</span>
-<span class="fc" id="L512">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L517">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L518">        requestedCourse.reassignInstructor(teacher);</span>
+<span class="fc" id="L519">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
       } else {
-<span class="fc" id="L514">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L521">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
-<span class="nc" id="L516">    } catch (Exception e) {</span>
-<span class="nc" id="L517">      return handleException(e);</span>
+<span class="nc" id="L523">    } catch (Exception e) {</span>
+<span class="nc" id="L524">      return handleException(e);</span>
     }
   }
 
@@ -537,28 +544,28 @@ import org.springframework.web.bind.annotation.RestController;
                                                 @RequestParam(value = &quot;location&quot;) String location) {
     try {
       boolean doesCourseExists;
-<span class="fc bfc" id="L540" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
+<span class="fc bfc" id="L547" title="All 2 branches covered.">      doesCourseExists = retrieveCourse(deptCode, courseCode).getStatusCode() == HttpStatus.OK;</span>
 
-<span class="fc bfc" id="L542" title="All 2 branches covered.">      if (doesCourseExists) {</span>
+<span class="fc bfc" id="L549" title="All 2 branches covered.">      if (doesCourseExists) {</span>
         HashMap&lt;String, Department&gt; departmentMapping;
-<span class="fc" id="L544">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
+<span class="fc" id="L551">        departmentMapping = IndividualProjectApplication.myFileDatabase.getDepartmentMapping();</span>
         HashMap&lt;String, Course&gt; coursesMapping;
-<span class="fc" id="L546">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
+<span class="fc" id="L553">        coursesMapping = departmentMapping.get(deptCode).getCourseSelection();</span>
 
-<span class="fc" id="L548">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
-<span class="fc" id="L549">        requestedCourse.reassignLocation(location);</span>
-<span class="fc" id="L550">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
+<span class="fc" id="L555">        Course requestedCourse = coursesMapping.get(Integer.toString(courseCode));</span>
+<span class="fc" id="L556">        requestedCourse.reassignLocation(location);</span>
+<span class="fc" id="L557">        return new ResponseEntity&lt;&gt;(&quot;Attributed was updated successfully.&quot;, HttpStatus.OK);</span>
       } else {
-<span class="fc" id="L552">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+<span class="fc" id="L559">        return new ResponseEntity&lt;&gt;(&quot;Course Not Found&quot;, HttpStatus.NOT_FOUND);</span>
       }
-<span class="nc" id="L554">    } catch (Exception e) {</span>
-<span class="nc" id="L555">      return handleException(e);</span>
+<span class="nc" id="L561">    } catch (Exception e) {</span>
+<span class="nc" id="L562">      return handleException(e);</span>
     }
   }
 
   private ResponseEntity&lt;?&gt; handleException(Exception e) {
-<span class="nc" id="L560">    e.printStackTrace();</span>
-<span class="nc" id="L561">    return new ResponseEntity&lt;&gt;(&quot;An Error has occurred&quot;, HttpStatus.OK);</span>
+<span class="nc" id="L567">    e.printStackTrace();</span>
+<span class="nc" id="L568">    return new ResponseEntity&lt;&gt;(&quot;An Error has occurred&quot;, HttpStatus.OK);</span>
   }
 
 

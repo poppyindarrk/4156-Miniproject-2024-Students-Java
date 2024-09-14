@@ -2,5 +2,5 @@ GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_
 IndividualProject,dev.coms4156.project.individualproject,Department,0,111,0,4,0,28,0,11,0,9
 IndividualProject,dev.coms4156.project.individualproject,MyFileDatabase,15,119,1,5,6,28,1,8,0,6
 IndividualProject,dev.coms4156.project.individualproject,Course,0,88,0,6,0,28,0,15,0,12
-IndividualProject,dev.coms4156.project.individualproject,RouteController,145,561,9,57,43,104,10,41,3,15
+IndividualProject,dev.coms4156.project.individualproject,RouteController,145,563,9,57,43,105,10,41,3,15
 IndividualProject,dev.coms4156.project.individualproject,IndividualProjectApplication,1182,42,5,3,205,13,7,4,3,4
